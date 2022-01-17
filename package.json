@@ -7,7 +7,8 @@
     "node": ">=16"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --config .eslintrc.js src/**"
   },
   "repository": {
     "type": "git",
@@ -16,6 +17,7 @@
   "author": "Yoonkyung Kim",
   "license": "UNLICENSED",
   "devDependencies": {
+    "eslint": "^8.7.0",
     "prettier": "2.5.1"
   }
 }
