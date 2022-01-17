@@ -28,7 +28,7 @@ app.use(cors());
 app.use(compression());
 
 // Define a simple health check route. If the server is running
-// We'll respondwith a 200 OK. If not, the server isn't healthy.
+// We'll respond with a 200 OK. If not, the server isn't healthy.
 app.get('/', (req, res) => {
   // Clients shouldn't cache this response (always request it fresh)
   // See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching#controlling_caching
