@@ -7,8 +7,10 @@
     "node": ">=16"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint --config .eslintrc.js src/**",
+    "test:watch": "jest -c jest.config.js --runInBand --watch --",
+    "test": "jest -c jest.config.js --runInBand --",
+    "coverage": "jest -c jest.config.js --runInBand --coverage",
+    "lint": "eslint --config .eslintrc.js src/** tests/**",
     "start": "node src/index.js",
     "dev": "LOG_LEVEL=debug nodemon ./src/index.js --watch src",
     "debug": "LOG_LEVEL=debug nodemon --inspect=0.0.0.0:9229 ./src/index.js --watch src"
@@ -21,8 +23,10 @@
   "license": "UNLICENSED",
   "devDependencies": {
     "eslint": "^8.7.0",
+    "jest": "^27.4.7",
     "nodemon": "^2.0.15",
-    "prettier": "2.5.1"
+    "prettier": "2.5.1",
+    "supertest": "^6.2.2"
   },
   "dependencies": {
     "aws-jwt-verify": "^2.1.0",
@@ -31,6 +35,8 @@
     "dotenv": "^14.2.0",
     "express": "^4.17.2",
     "helmet": "^5.0.1",
+    "http-auth": "^4.1.9",
+    "http-auth-passport": "^1.0.6",
     "passport": "^0.5.2",
     "passport-http-bearer": "^1.0.1",
     "pino": "^7.6.3",
