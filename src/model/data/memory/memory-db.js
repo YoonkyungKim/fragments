@@ -13,8 +13,10 @@ class MemoryDB {
      */
     get(primaryKey, secondaryKey) {
         if (!(validateKey(primaryKey) && validateKey(secondaryKey))) {
-            throw new Error(
-                `primaryKey and secondaryKey strings are required, got primaryKey=${primaryKey}, secondaryKey=${secondaryKey}`
+            return Promise.reject(
+                new Error(
+                    `primaryKey and secondaryKey strings are required, got primaryKey=${primaryKey}, secondaryKey=${secondaryKey}`
+                )
             );
         }
 
@@ -29,10 +31,12 @@ class MemoryDB {
      * @param {string} secondaryKey
      * @returns Promise
      */
-    put(primaryKey, secondaryKey, value) {
+    put(primaryKey, secondaryKey, value) {        
         if (!(validateKey(primaryKey) && validateKey(secondaryKey))) {
-            throw new Error(
-                `primaryKey and secondaryKey strings are required, got primaryKey=${primaryKey}, secondaryKey=${secondaryKey}`
+            return Promise.reject(
+                new Error(
+                    `primaryKey and secondaryKey strings are required, got primaryKey=${primaryKey}, secondaryKey=${secondaryKey}`
+                )   
             );
         }
 
@@ -52,12 +56,16 @@ class MemoryDB {
      */
     query(primaryKey) {
         if (!validateKey(primaryKey)) {
-            throw new Error(`primaryKey string is required, got primaryKey=${primaryKey}`);
+            return Promise.reject(
+                new Error(
+                    `primaryKey string is required, got primaryKey=${primaryKey}`
+                )
+            );
         }
 
         // No matter what, we always return an array (even if empty)
         const db = this.db;
-        const values = db[primaryKey] && Object.values(db[primaryKey]);
+        const values = db[primaryKey] ? Object.values(db[primaryKey]) : [];
         return Promise.resolve([].concat(values));
     }
 
@@ -69,15 +77,19 @@ class MemoryDB {
      */
     async del(primaryKey, secondaryKey) {
         if (!(validateKey(primaryKey) && validateKey(secondaryKey))) {
-            throw new Error(
-                `primaryKey and secondaryKey strings are required, got primaryKey=${primaryKey}, secondaryKey=${secondaryKey}`
+            return Promise.reject(
+                new Error(
+                    `primaryKey and secondaryKey strings are required, got primaryKey=${primaryKey}, secondaryKey=${secondaryKey}`
+                )
             );
         }
 
         // Throw if trying to delete a key that doesn't exist
         if (!(await this.get(primaryKey, secondaryKey))) {
-            throw new Error(
-                `missing entry for primaryKey=${primaryKey} and secondaryKey=${secondaryKey}`
+            return Promise.reject(
+                new Error(
+                    `missing entry for primaryKey=${primaryKey} and secondaryKey=${secondaryKey}`
+                )
             );
         }
 
