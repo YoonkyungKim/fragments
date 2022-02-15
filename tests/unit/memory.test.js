@@ -74,15 +74,15 @@ describe('memory', () => {
   });
 
   test('deleteFragment() deletes metadata and data from memory db', async () => {
-      await writeFragment({ ownerId: ownerId, id: '1', fragment: 'fragment 1'});
-      expect(await readFragment(ownerId, '1')).toEqual({ ownerId: ownerId, id: '1', fragment: 'fragment 1'});
+    await writeFragment({ ownerId: ownerId, id: '1', fragment: 'fragment 1'});
+    expect(await readFragment(ownerId, '1')).toEqual({ ownerId: ownerId, id: '1', fragment: 'fragment 1'});
 
-      await writeFragmentData(ownerId, '1', 'fragment 1');
-      expect(await readFragmentData(ownerId, '1')).toBe('fragment 1');
-        
-      await deleteFragment(ownerId, '1');
-      expect(await readFragment(ownerId, '1')).toBe(undefined);
-      expect(await readFragmentData(ownerId, '1')).toBe(undefined);
+    await writeFragmentData(ownerId, '1', 'fragment 1');
+    expect(await readFragmentData(ownerId, '1')).toBe('fragment 1');
+    
+    await deleteFragment(ownerId, '1');
+    expect(await readFragment(ownerId, '1')).toBe(undefined);
+    expect(await readFragmentData(ownerId, '1')).toBe(undefined);
   });
 
   test('deleteFragment() throws if owner id and id not in db', async () => {
