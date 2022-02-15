@@ -3,20 +3,41 @@ const request = require('supertest');
 const app = require('../../src/app');
 
 describe('GET /v1/fragments', () => {
-    // If the request is missing the Authorization header, it should be forbidden
-    test('unauthenticated requests are denied', () => request(app).get('/v1/fragments').expect(401));
+  // If the request is missing the Authorization header, it should be forbidden
+  test('unauthenticated requests are denied', () => request(app).get('/v1/fragments').expect(401));
 
-    // If the wrong username/password pair are used (no such user), it should be forbidden
-    test('incorrect credentials are denied', () =>
-        request(app).get('/v1/fragments').auth('invalid@email.com', 'incorrect_password').expect(401));
+  // If the wrong username/password pair are used (no such user), it should be forbidden
+  test('incorrect credentials are denied', () =>
+    request(app).get('/v1/fragments').auth('invalid@email.com', 'incorrect_password').expect(401));
 
-    // Using a valid username/password pair should give a success result with a .fragments array
-    test('authenticated users get a fragments array', async () => {
-        const res = await request(app).get('/v1/fragments').auth('user1@email.com', 'password1');
-        expect(res.statusCode).toBe(200);
-        expect(res.body.status).toBe('ok');
-        expect(Array.isArray(res.body.fragments)).toBe(true);
-    });
+  // Using a valid username/password pair should give a success result with a fragments array
+  test('authenticated users get a fragments array (user has no fragments: still get an array)', async () => {
+    const res = await request(app).get('/v1/fragments').auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe('ok');
+    expect(Array.isArray(res.body.fragments)).toBe(true);
+  });
 
-    // TODO: we'll need to add tests to check the contents of the fragments array later
+  // check the contents of the fragments array
+  test('authenticated users get a fragments array of ids: user with fragments', async () => {
+    const postRes1 = await request(app)
+      .post('/v1/fragments')
+      .auth('user1@email.com', 'password1')
+      .set('Content-Type', 'text/plain')
+      .send('This is fragment');
+    const id1 = (JSON.parse(postRes1.text)).fragment.id;
+
+    const postRes2 = await request(app)
+      .post('/v1/fragments')
+      .auth('user1@email.com', 'password1')
+      .set('Content-Type', 'text/plain')
+      .send('This is fragment 2');
+    const id2 = (JSON.parse(postRes2.text)).fragment.id;
+
+    const getRes = await request(app)
+      .get('/v1/fragments/')
+      .auth('user1@email.com', 'password1');
+    expect(getRes.statusCode).toBe(200);
+    expect(getRes.body.fragments).toEqual([id1, id2]);
+  });
 });
