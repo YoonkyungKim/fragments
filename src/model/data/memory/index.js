@@ -5,23 +5,23 @@ const data = new MemoryDB();
 const metadata = new MemoryDB();
 
 // Write a fragment's metadata to memory db. Returns a Promise
-async function writeFragment(fragment) {
-  return await metadata.put(fragment.ownerId, fragment.id, fragment);
+function writeFragment(fragment) {
+  return metadata.put(fragment.ownerId, fragment.id, fragment);
 }
 
 // Read a fragment's metadata from memory db. Returns a Promise
-async function readFragment(ownerId, id) {
-  return await metadata.get(ownerId, id);
+function readFragment(ownerId, id) {
+  return metadata.get(ownerId, id);
 }
 
 // Write a fragment's data to memory db. Returns a Promise
-async function writeFragmentData(ownerId, id, value) {
-  return await data.put(ownerId, id, value);
+function writeFragmentData(ownerId, id, value) {
+  return data.put(ownerId, id, value);
 }
 
 // Read a fragment's data from memory db. Returns a Promise
-async function readFragmentData(ownerId, id) {
-  return await data.get(ownerId, id);
+function readFragmentData(ownerId, id) {
+  return data.get(ownerId, id);
 }
 
 // Get a list of fragment ids/objects for the given user from memory db. Returns a Promise

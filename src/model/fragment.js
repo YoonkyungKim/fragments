@@ -13,6 +13,8 @@ const {
   deleteFragment,
 } = require('./data');
 
+const logger = require('../logger');
+
 const validTypes = [
   `text/plain`,
   /*
@@ -86,9 +88,9 @@ class Fragment {
 	 * Saves the current fragment to the database
 	 * @returns Promise
 	 */
-  async save() {
-    this.updated = await new Date().toISOString();
-    return await writeFragment(this);
+  save() {
+    this.updated = new Date().toISOString();
+    return writeFragment(this);
   }
 
   /**
@@ -129,7 +131,6 @@ class Fragment {
 	 * @returns {boolean} true if fragment's type is text/*
 	 */
   get isText() {
-    // const regex = /text\/+/g;
     if (this.mimeType.match(/text\/+/)) {
       return true;
     } else {
@@ -161,6 +162,7 @@ class Fragment {
 	 * @returns {boolean} true if we support this Content-Type (i.e., type/subtype)
 	 */
   static isSupportedType(value) {
+    logger.debug("isSupportedType: " + value);
     let valid = false;
     validTypes.forEach((format) => valid = value.includes(format) ? true : false );
     return valid;
