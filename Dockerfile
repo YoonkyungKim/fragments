@@ -59,7 +59,6 @@ COPY --chown=node:node ./tests/.htpasswd ./tests/.htpasswd
 
 USER node
 
-# ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 # Start the container by running our server
 CMD ["dumb-init", "node", "src/index.js"]
 
