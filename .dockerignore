@@ -7,6 +7,8 @@ tests/
 .env
 .eslintrc.js
 .git/
+.github/
 .gitignore
 .prettier*
 jest*
+*.md
