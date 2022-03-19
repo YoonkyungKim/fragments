@@ -89,5 +89,5 @@ jobs:
           region: us-east-1
           application_name: fragments
           environment_name: fragments-env
-          version: ${{ env.VERSION }}
+          version_label: ${{ env.VERSION }}
           deployment_package: ${{ env.COMPOSE_FILE }}
