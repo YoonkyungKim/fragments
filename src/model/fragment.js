@@ -16,18 +16,18 @@ const {
 const logger = require('../logger');
 
 const validTypes = [
-  `text/plain`,
-  /*
-   Currently, only text/plain is supported. Others will be added later.
-  `text/markdown`,
-  `text/html`,
-  `application/json`,
-  `image/png`,
-  `image/jpeg`,
-  `image/webp`,
-  `image/gif`,
-  */
+  'text/plain',
+  'text/markdown',
+  'text/html',
+  'application/json',
+  // 'image/png',
+  // 'image/jpeg',
+  // 'image/webp',
+  // 'image/gif',
 ];
+
+// NOTE: we store the entire Content-Type (i.e., with the charset if present), 
+// but also allow using only the media type (e.g., text/html vs. text/html; charset=iso-8859-1).
 
 class Fragment {
   constructor({ id, ownerId, type, size = 0 }) {
@@ -37,7 +37,7 @@ class Fragment {
       throw new Error("size must be a number");
     } else if (size < 0) {
       throw new Error("size cannot be negative");
-    } else if (!Fragment.isSupportedType(type)) {
+    } else if (!(Fragment.isSupportedType(type))) {
       throw new Error("invalid type");
     } else {
       this.id = id || nanoid();
@@ -66,12 +66,7 @@ class Fragment {
 	 * @returns Promise<Fragment>
 	 */
   static async byId(ownerId, id) {
-    const fragment = await readFragment(ownerId, id);
-    if (fragment) {
-      return fragment;
-    } else {
-      throw new Error("No fragment with this id")
-    }
+    return await readFragment(ownerId, id);
   }
 
   /**
@@ -98,7 +93,7 @@ class Fragment {
 	 * @returns Promise<Buffer>
 	 */
   async getData() {
-    return Buffer.from(await readFragmentData(this.ownerId, this.id));
+    return await readFragmentData(this.ownerId, this.id);
   }
 
   /**
@@ -163,9 +158,7 @@ class Fragment {
 	 */
   static isSupportedType(value) {
     logger.debug("isSupportedType: " + value);
-    let valid = false;
-    validTypes.forEach((format) => valid = value.includes(format) ? true : false );
-    return valid;
+    return validTypes.some(element => value.includes(element));
   }
 }
 
