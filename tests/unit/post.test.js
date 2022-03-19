@@ -42,7 +42,7 @@ describe('POST /v1/fragments', () => {
   test('get unsupported type error', () => 
     request(app)
       .post('/v1/fragments')
-      .set('Content-Type', 'image/png')
+      .set('Content-Type', 'audio/mpeg')
       .auth('user1@email.com', 'password1')
       .send("aa")
       .expect(415)
