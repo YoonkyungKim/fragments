@@ -9,4 +9,9 @@ services:
     environment:
       # Use another environment variable, with a fallback default value
       - NODE_ENV=${NODE_ENV:-production}
-      - HTPASSWD_FILE=tests/.htpasswd
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - PORT=8080
+      # Forward any authorization variables into the container
+      - HTPASSWD_FILE
+      - AWS_COGNITO_POOL_ID
+      - AWS_COGNITO_CLIENT_ID
