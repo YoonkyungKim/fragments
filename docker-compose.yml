@@ -1,17 +1,16 @@
 services:
   fragments:
-    # yoonkyungkim/fragments:latest
+    # image: yoonkyungkim/fragments:latest
     image: ${DOCKER_REPO}:${DOCKER_TAG}
     init: true
     ports:
       - '80:8080'
     # Define the environment inside the running container
     environment:
+      - NODE_ENV=production
       # Use another environment variable, with a fallback default value
-      - NODE_ENV=${NODE_ENV:-production}
       - LOG_LEVEL=${LOG_LEVEL:-info}
-      - PORT=8080
-      # Forward any authorization variables into the container
-      - HTPASSWD_FILE
+      # # Forward any authorization variables into the container
       - AWS_COGNITO_POOL_ID
       - AWS_COGNITO_CLIENT_ID
+      - HTPASSWD
