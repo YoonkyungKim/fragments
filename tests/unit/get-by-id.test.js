@@ -38,7 +38,7 @@ describe('GET /v1/fragments/:id', () => {
 
   // If the extension used represents an unknown or unsupported type, or if the fragment cannot be converted to this type, 
   // an HTTP 415 error is returned instead, with an appropriate message. For example, a plain text fragment cannot be returned as a PNG.
-  test('if fragment cannot be converted to the extension type used, returns 404 error', async () => {
+  test('if fragment cannot be converted to the extension type used, returns 415 error', async () => {
     const postRes = await request(app)
       .post('/v1/fragments')
       .auth('user2@email.com', 'password2')
