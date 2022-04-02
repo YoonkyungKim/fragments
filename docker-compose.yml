@@ -10,7 +10,12 @@ services:
       - NODE_ENV=production
       # Use another environment variable, with a fallback default value
       - LOG_LEVEL=${LOG_LEVEL:-info}
-      # # Forward any authorization variables into the container
+      # Default to use `us-east-1`, which will also pick the AWS data backend
+      - AWS_REGION=us-east-1
+      # Allow the following variables to be forwarded into the container from the env if set
       - AWS_COGNITO_POOL_ID
       - AWS_COGNITO_CLIENT_ID
+      # We'll typically want to use Cognito, but we can pass this instead for testing
       - HTPASSWD
+      # The S3 Bucket to use, default to `fragments` if missing
+      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME:-fragments}
