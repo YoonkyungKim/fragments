@@ -39,5 +39,11 @@ describe('DELETE /v1/fragments', () => {
       .auth('user2@email.com', 'password2');
 
     expect(getRes.statusCode).toBe(404);
+
+    const getAll = await request(app)
+      .get(`/v1/fragments`)
+      .auth('user2@email.com', 'password2');
+
+    expect(getAll.body.fragments).toEqual([]);
   });
 });
