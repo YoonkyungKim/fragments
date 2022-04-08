@@ -71,8 +71,8 @@ module.exports = async (req, res) => {
       res.status(200).send(data);
     }
   } catch (e) {
-    logger.warn({ e }, 'Error getting fragment by id');
-    res.status(500).json(createErrorResponse(500, e));
+    logger.warn(e.message, 'Error getting fragment by id');
+    res.status(500).json(createErrorResponse(500, e.message));
   }
 };
   
