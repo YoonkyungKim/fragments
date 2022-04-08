@@ -40,6 +40,7 @@ async function readFragment(ownerId, id) {
     const data = await ddbDocClient.send(command);
     // We may or may not get back any data (e.g., no item found for the given key).
     // If we get back an item (fragment), we'll return it.  Otherwise we'll return `undefined`.
+    logger.info({ data }, 'data got in readFragment');
     return data?.Item;
   } catch (err) {
     logger.warn({ err, params }, 'error reading fragment from DynamoDB');
@@ -109,6 +110,7 @@ async function readFragmentData(ownerId, id) {
   try {
     // Get the object from the Amazon S3 bucket. It is returned as a ReadableStream.
     const data = await s3Client.send(command);
+    
     // Convert the ReadableStream to a Buffer
     return streamToBuffer(data.Body);
   } catch (err) {

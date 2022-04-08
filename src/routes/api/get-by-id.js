@@ -19,6 +19,7 @@ module.exports = async (req, res) => {
 
     // If the id does not represent a known fragment, returns an HTTP 404 with an appropriate error message.
     if (!fragment) {
+      logger.debug('no fragment with this id (in get-by-id.js)');
       return res.status(404).json(createErrorResponse(404, "No fragment with this id"));
     }
 
@@ -70,6 +71,7 @@ module.exports = async (req, res) => {
       res.status(200).send(data);
     }
   } catch (e) {
+    logger.warn({ e }, 'Error getting fragment by id');
     res.status(500).json(createErrorResponse(500, e));
   }
 };

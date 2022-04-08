@@ -56,7 +56,12 @@ class Fragment {
 	 * @returns Promise<Array<Fragment>>
 	 */
   static async byUser(ownerId, expand = false) {
-    return await listFragments(ownerId, expand);
+    try {
+      return await listFragments(ownerId, expand);
+    } catch (err) {
+      logger.error({ err }, 'Error getting all fragments');
+      throw new Error('Error getting all fragments');
+    }
   }
 
   /**
@@ -66,7 +71,12 @@ class Fragment {
 	 * @returns Promise<Fragment>
 	 */
   static async byId(ownerId, id) {
-    return await readFragment(ownerId, id);
+    try {
+      return await readFragment(ownerId, id);
+    } catch (err) {
+      logger.warn({ err }, 'error reading fragment from DynamoDB');
+      throw new Error('unable to read fragment data');
+    }
   }
 
   /**
@@ -76,7 +86,12 @@ class Fragment {
 	 * @returns Promise
 	 */
   static async delete(ownerId, id) {
-    return await deleteFragment(ownerId, id);
+    try {
+      return await deleteFragment(ownerId, id);
+    } catch (err) {
+      logger.error({ err }, 'Unable to delete S3 object');
+      throw new Error('Unable to delete S3 object');
+    }
   }
 
   /**
@@ -93,7 +108,12 @@ class Fragment {
 	 * @returns Promise<Buffer>
 	 */
   async getData() {
-    return await readFragmentData(this.ownerId, this.id);
+    try {
+      return await readFragmentData(this.ownerId, this.id);
+    } catch (err) {
+      logger.warn({ err }, 'Error streaming fragment data from S3');
+      throw new Error('unable to read fragment data');
+    }
   }
 
   /**
@@ -107,7 +127,12 @@ class Fragment {
     } else {
       this.size = Buffer.byteLength(data);
       this.save();
-      return await writeFragmentData(this.ownerId, this.id, data);
+      try {
+        return await writeFragmentData(this.ownerId, this.id, data);
+      } catch (err) {
+        logger.error({ err }, 'Error uploading fragment data to S3');
+        throw new Error('unable to upload fragment data');
+      }
     }
   }
 
