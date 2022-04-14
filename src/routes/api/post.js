@@ -3,7 +3,7 @@ const { Fragment } = require('../../model/fragment');
 const logger = require('../../logger');
 
 module.exports = async (req, res) => {
-  logger.debug('Post: '+ req.body);
+  logger.debug({ body: req.body }, 'POST /fragments');
 
   if (!Buffer.isBuffer(req.body)) {
     return res.status(415).json(createErrorResponse(415, "Unsupported Media Type"));
@@ -14,8 +14,8 @@ module.exports = async (req, res) => {
     await fragment.save();
     await fragment.setData(req.body);
 
-    logger.debug('New fragment created: ' + JSON.stringify(fragment));
-
+    logger.debug({ fragment }, 'New fragment created');
+    
     res.set('Content-Type', fragment.type);
     res.set('Location', `${process.env.API_URL}/v1/fragments/${fragment.id}`);
     res.status(201).json(createSuccessResponse({
