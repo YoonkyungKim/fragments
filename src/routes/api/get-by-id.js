@@ -13,17 +13,16 @@ module.exports = async (req, res) => {
   logger.debug(`owner id and id: ${req.user}, ${req.params.id}`);
 
   try {
-    const fragmentObj = await Fragment.byId(req.user, req.params.id.split('.')[0]);
+    const fragment = await Fragment.byId(req.user, req.params.id.split('.')[0]);
 
     logger.debug(`get by id req.params: ${JSON.stringify(req.params)}`);
 
     // If the id does not represent a known fragment, returns an HTTP 404 with an appropriate error message.
-    if (!fragmentObj) {
+    if (!fragment) {
       logger.debug('no fragment with this id (in get-by-id.js)');
       return res.status(404).json(createErrorResponse(404, "No fragment with this id"));
     }
 
-    const fragment =  new Fragment(fragmentObj);
     const data = await fragment.getData();
 
     logger.debug('data: ' + data);

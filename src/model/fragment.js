@@ -30,23 +30,32 @@ const validTypes = [
 // but also allow using only the media type (e.g., text/html vs. text/html; charset=iso-8859-1).
 
 class Fragment {
-  constructor({ id, ownerId, type, size = 0 }) {
-    if (!ownerId || !type) {
-      throw new Error("owner id and type is required");
-    }	else if (typeof size !== "number") {
-      throw new Error("size must be a number");
-    } else if (size < 0) {
-      throw new Error("size cannot be negative");
-    } else if (!(Fragment.isSupportedType(type))) {
-      throw new Error("invalid type");
-    } else {
+  constructor({ id, ownerId, type, created = undefined, updated = undefined, size = 0 }) {
+    if (created !== undefined && updated !== undefined) {
       this.id = id || nanoid();
       this.ownerId = ownerId;
-      this.created = new Date().toISOString();
-      this.updated = new Date().toISOString();
+      this.created = created;
+      this.updated = updated;
       this.type = type;
       this.size = size;
-    }
+    } else {
+      if (!ownerId || !type) {
+        throw new Error("owner id and type is required");
+      }	else if (typeof size !== "number") {
+        throw new Error("size must be a number");
+      } else if (size < 0) {
+        throw new Error("size cannot be negative");
+      } else if (!(Fragment.isSupportedType(type))) {
+        throw new Error("invalid type");
+      } else {
+        this.id = id || nanoid();
+        this.ownerId = ownerId;
+        this.created = new Date().toISOString();
+        this.updated = new Date().toISOString();
+        this.type = type;
+        this.size = size;
+      }
+    }    
   }
 
   /**
@@ -72,7 +81,14 @@ class Fragment {
 	 */
   static async byId(ownerId, id) {
     try {
-      return await readFragment(ownerId, id);
+      const fragment = await readFragment(ownerId, id);
+      if (fragment) {
+        if (fragment instanceof Fragment === false) {
+          return Fragment.convert(fragment);
+        } else {
+          return fragment;
+        }
+      }
     } catch (err) {
       logger.warn({ err }, 'error reading fragment from DynamoDB');
       throw new Error('unable to read fragment data');
@@ -184,6 +200,10 @@ class Fragment {
   static isSupportedType(value) {
     logger.debug("isSupportedType: " + value);
     return validTypes.some(element => value.includes(element));
+  }
+
+  static convert(object) {
+    return new Fragment(object);  
   }
 }
 
