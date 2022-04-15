@@ -42,7 +42,7 @@ RUN npm ci --only=production
 # Stage 1..
 FROM node:16.14.0-alpine3.14@sha256:98a87dfa76dde784bb4fe087518c839697ce1f0e4f55e6ad0b49f0bfd5fbe52c AS main
 
-RUN apk update && apk add --no-cache dumb-init=~1.2.5
+RUN apk add --no-cache dumb-init=~1.2.5 curl=~7.79.1
 
 ENV NODE_ENV=production
 
