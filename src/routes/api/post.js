@@ -22,7 +22,8 @@ module.exports = async (req, res) => {
       fragment: fragment,
     }));
 
-  } catch (err) {
-    res.status(500).json(createErrorResponse(500, err));
+  } catch (e) {
+    logger.warn(e.message, 'Error posting fragment');
+    res.status(500).json(createErrorResponse(500, e.message));
   }
 }
