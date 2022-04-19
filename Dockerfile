@@ -7,8 +7,8 @@
 FROM node:16.14.0@sha256:fd86131ddf8e0faa8ba7a3e49b6bf571745946e663e4065f3bff0a07204c1dde AS dependencies
 
 # LABEL adds metadata to an image
-LABEL maintainer="Yoonkyung Kim"
-LABEL description="Fragments node.js microservice"
+LABEL maintainer="Yoonkyung Kim" \
+      description="Fragments node.js microservice"
 
 # Environmental variables become part of the build image and will persist in any containers run using this image
 # Note we can define things that will always be different at run-time instead of build-time
@@ -35,7 +35,9 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install only production dependencies defined in package-lock.json
-RUN npm ci --only=production
+RUN npm uninstall sharp \
+    npm ci --only=production \
+    npm install --platform=linuxmusl sharp@0.30.3
 
 ###################################################
 
