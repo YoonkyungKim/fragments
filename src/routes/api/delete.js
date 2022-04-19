@@ -6,7 +6,6 @@ const logger = require('../../logger');
 const { Fragment } = require('../../model/fragment');
 const { createSuccessResponse, createErrorResponse } = require('../../response');
 
-
 module.exports = async (req, res) => {
   logger.debug(`owner id and id: ${req.user}, ${req.params.id}`);
 
