@@ -1,7 +1,7 @@
 {
   "name": "fragments",
   "private": true,
-  "version": "11.0.2",
+  "version": "11.0.3",
   "description": "Fragments back-end API for Winter 2022",
   "engines": {
     "node": ">=16"
