@@ -22,6 +22,32 @@ HTTP/1.1 200
 header "Content-Type" startsWith "text/plain"
 body == "Hello S3!"
 
+# Update (PUT) fragment data we just posted
+PUT {{url}}
+# user1@email.com:password1
+Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
+# We can update to the same type: so it must be plain text
+Content-Type: text/plain
+# Body
+```This is an updated fragment!```
+
+HTTP/1.1 201
+# We have various assertions about the response that we want to check 
+[Asserts]
+jsonpath "$.fragment.type" == "text/plain"
+# 19 is the length of our fragment data: 'This is an updated fragment!'
+jsonpath "$.fragment.size" == 28
+
+# Try to GET the fragment we just updated
+GET {{url}}
+Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
+
+HTTP/1.1 200
+Content-Length: 28
+[Asserts]
+header "Content-Type" startsWith "text/plain"
+body == "This is an updated fragment!"
+
 # DELETE the fragment using the url as an authorized user.
 DELETE {{url}}
 Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==

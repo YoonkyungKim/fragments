@@ -29,6 +29,37 @@ jsonpath "$.fragment.updated" isString
 jsonpath "$.fragment.type" == "application/json"
 jsonpath "$.fragment.size" == 25
 
+# Update (PUT) fragment data we just posted
+PUT {{fragment1_url}}
+Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
+# We can update to the same type: so it must be application/json
+Content-Type: application/json
+# Body
+{ "service": "DynamoDB updated fragment" }
+
+HTTP/1.1 201
+[Asserts]
+jsonpath "$.fragment.type" == "application/json"
+jsonpath "$.fragment.size" == 42
+
+# Try to GET the fragment we just updated
+GET {{fragment1_url}}
+Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
+
+HTTP/1.1 200
+Content-Length: 42
+[Asserts]
+header "Content-Type" startsWith "application/json"
+
+# We can't update it with different type
+PUT {{fragment1_url}}
+Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
+Content-Type: text/plain
+# Body
+```This is an updated fragment!```
+
+HTTP/1.1 400
+
 # POST a second Markdown fragment to http://localhost:8080 as the same authorized user. The fragment's body should be the Markdown value, DynamoDB is **great**..
 POST http://localhost:8080/v1/fragments
 # user1@email.com:password1
