@@ -35,10 +35,9 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install only production dependencies defined in package-lock.json
-RUN npm uninstall sharp \
-    npm ci --only=production \
-    npm install --platform=linuxmusl sharp@0.30.3
-
+RUN npm ci --only=production \
+    && npm uninstall sharp \
+    && npm install --platform=linuxmusl sharp@0.30.3
 ###################################################
 
 # Stage 1..
@@ -46,9 +45,9 @@ FROM node:16.14.0-alpine3.14@sha256:98a87dfa76dde784bb4fe087518c839697ce1f0e4f55
 
 RUN apk add --no-cache dumb-init=~1.2.5 curl=~7.79.1
 
-ENV NODE_ENV=production
-
 WORKDIR /app
+
+ENV NODE_ENV=production
 
 # Copy cached dependencies from previous stage so we don't have to download
 COPY --chown=node:node --from=dependencies /app /app/

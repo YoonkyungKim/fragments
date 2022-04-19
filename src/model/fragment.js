@@ -2,6 +2,10 @@
 const { nanoid } = require('nanoid');
 // Use https://www.npmjs.com/package/content-type to create/parse Content-Type headers
 const contentType = require('content-type');
+const md = require('markdown-it')({
+  html: true,
+});
+const sharp = require('sharp');
 
 // Functions for working with fragment metadata/data using our DB
 const {
@@ -20,10 +24,10 @@ const validTypes = [
   'text/markdown',
   'text/html',
   'application/json',
-  // 'image/png',
-  // 'image/jpeg',
-  // 'image/webp',
-  // 'image/gif',
+  'image/png',
+  'image/jpeg',
+  'image/webp',
+  'image/gif',
 ];
 
 // NOTE: we store the entire Content-Type (i.e., with the charset if present), 
@@ -31,31 +35,22 @@ const validTypes = [
 
 class Fragment {
   constructor({ id, ownerId, type, created = undefined, updated = undefined, size = 0 }) {
-    if (created !== undefined && updated !== undefined) {
+    if (!ownerId || !type) {
+      throw new Error("owner id and type is required");
+    }	else if (typeof size !== "number") {
+      throw new Error("size must be a number");
+    } else if (size < 0) {
+      throw new Error("size cannot be negative");
+    } else if (!(Fragment.isSupportedType(type))) {
+      throw new Error("invalid type");
+    } else {
       this.id = id || nanoid();
       this.ownerId = ownerId;
-      this.created = created;
-      this.updated = updated;
+      this.created = created || new Date().toISOString();
+      this.updated = updated || new Date().toISOString();
       this.type = type;
       this.size = size;
-    } else {
-      if (!ownerId || !type) {
-        throw new Error("owner id and type is required");
-      }	else if (typeof size !== "number") {
-        throw new Error("size must be a number");
-      } else if (size < 0) {
-        throw new Error("size cannot be negative");
-      } else if (!(Fragment.isSupportedType(type))) {
-        throw new Error("invalid type");
-      } else {
-        this.id = id || nanoid();
-        this.ownerId = ownerId;
-        this.created = new Date().toISOString();
-        this.updated = new Date().toISOString();
-        this.type = type;
-        this.size = size;
-      }
-    }    
+    } 
   }
 
   /**
@@ -84,13 +79,13 @@ class Fragment {
       const fragment = await readFragment(ownerId, id);
       if (fragment) {
         if (fragment instanceof Fragment === false) {
-          return Fragment.convert(fragment);
+          return new Fragment(fragment);
         } else {
           return fragment;
         }
       }
     } catch (err) {
-      logger.warn({ err }, 'error reading fragment from DynamoDB');
+      logger.warn({ err }, 'error reading fragment data');
       throw new Error('unable to read fragment data');
     }
   }
@@ -105,8 +100,8 @@ class Fragment {
     try {
       return await deleteFragment(ownerId, id);
     } catch (err) {
-      logger.error({ err }, 'Unable to delete S3 object');
-      throw new Error('Unable to delete S3 object');
+      logger.error({ err }, 'Unable to delete fragment object');
+      throw new Error('Unable to delete fragment object');
     }
   }
 
@@ -127,7 +122,7 @@ class Fragment {
     try {
       return await readFragmentData(this.ownerId, this.id);
     } catch (err) {
-      logger.warn({ err }, 'Error streaming fragment data from S3');
+      logger.warn({ err }, 'Error to read fragment data');
       throw new Error('unable to read fragment data');
     }
   }
@@ -146,8 +141,8 @@ class Fragment {
       try {
         return await writeFragmentData(this.ownerId, this.id, data);
       } catch (err) {
-        logger.error({ err }, 'Error uploading fragment data to S3');
-        throw new Error('unable to upload fragment data');
+        logger.error({ err }, 'Error setting fragment data');
+        throw new Error('unable to set fragment data');
       }
     }
   }
@@ -202,8 +197,45 @@ class Fragment {
     return validTypes.some(element => value.includes(element));
   }
 
-  static convert(object) {
-    return new Fragment(object);  
+  /**
+	 * Returns the data converted to the desired type
+	 * @param {Buffer} data fragment data to be converted
+   * @param {string} destType the type you want to convert to (desired type)
+	 * @returns {Buffer} converted fragment data
+	 */
+  async convertType(data, destType) {
+    const convertableFormats = this.formats;
+    logger.debug("type: " + this.type);
+    logger.debug("mimeType: " + this.mimeType);
+    logger.debug("convertable formats: " + convertableFormats);
+
+    if (!convertableFormats.includes(destType)) {
+      logger.warn('Cannot convert fragment to this type');
+      return false;
+    }
+
+    let convertedResult = data;
+    if (this.type === 'text/markdown' && destType === 'text/html') {
+      convertedResult = md.render(data.toString());
+      convertedResult = Buffer.from(convertedResult);
+    } else if (destType === 'image/jpeg') {
+      convertedResult = await sharp(data)
+        .jpeg()
+        .toBuffer();
+    } else if (destType === 'image/png') {
+      convertedResult = await sharp(data)
+        .png()
+        .toBuffer();
+    } else if (destType === 'image/webp') {
+      convertedResult = await sharp(data)
+        .webp()
+        .toBuffer();
+    } else if (destType === 'image/gif') {
+      convertedResult = await sharp(data)
+        .gif()
+        .toBuffer();
+    }
+    return convertedResult;
   }
 }
 
