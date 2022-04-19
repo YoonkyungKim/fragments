@@ -8,7 +8,8 @@ const { createSuccessResponse, createErrorResponse } = require('../../response')
 
 
 module.exports = async (req, res) => {
-  logger.debug("req.query in delete: " + JSON.stringify(req.query));
+  logger.debug(`owner id and id: ${req.user}, ${req.params.id}`);
+
   const id = req.params.id.split('.')[0];
   try {
     const fragment = await Fragment.byId(req.user, id);

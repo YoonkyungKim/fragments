@@ -9,14 +9,11 @@ const { Fragment } = require('../../model/fragment');
 const { createSuccessResponse, createErrorResponse } = require('../../response');
 
 module.exports = async (req, res) => {
-  // logger.debug("req.query in get-by-id-info: " + JSON.stringify(req.query));
-  // logger.debug(`owner id and id: ${req.user}, ${req.params.id}`);
+  logger.debug(`owner id and id: ${req.user}, ${req.params.id}`);
 
   // Any await'ed call needs to have the error case handled so your server doesn't crash
   try {
     const fragment = await Fragment.byId(req.user, req.params.id);
-    
-    logger.debug(`get by id req.params: ${JSON.stringify(req.params)}`);
 
     // If the id does not represent a known fragment, returns an HTTP 404 with an appropriate error message.
     if (!fragment) {
