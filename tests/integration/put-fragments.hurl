@@ -1,3 +1,19 @@
+# If the request is missing the Authorization header, it should be forbidden
+PUT http://localhost:8080/v1/fragments/randomid
+Content-Type: text/plain
+"hello"
+
+HTTP/1.1 401
+
+# If the wrong username/password pair are used (no such user), it should be forbidden
+PUT http://localhost:8080/v1/fragments/randomid
+# Send random value for authorization
+Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhjlkkj3JkMQ==
+Content-Type: text/plain
+"hello"
+
+HTTP/1.1 401
+
 # Authenticated POST to /v1/fragments
 POST http://localhost:8080/v1/fragments
 # user1@email.com:password1

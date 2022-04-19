@@ -1,3 +1,15 @@
+
+# If the request is missing the Authorization header, it should be forbidden
+DELETE http://localhost:8080/v1/fragments
+
+HTTP/1.1 401
+
+# If the wrong username/password pair are used (no such user), it should be forbidden
+DELETE http://localhost:8080/v1/fragments
+Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhjlkkj3JkMQ==
+
+HTTP/1.1 401
+
 # POST a new JSON fragment to http://localhost:8080 as an authorized user
 POST http://localhost:8080/v1/fragments
 # user1@email.com:password1

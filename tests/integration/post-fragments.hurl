@@ -1,4 +1,3 @@
-# tests/integration/post-fragments.hurl
 # If the request is missing the Authorization header, it should be forbidden
 POST http://localhost:8080/v1/fragments
 Content-Type: text/plain

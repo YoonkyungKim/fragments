@@ -1,3 +1,14 @@
+# If the request is missing the Authorization header, it should be forbidden
+GET http://localhost:8080/v1/fragments
+
+HTTP/1.1 401
+
+# If the wrong username/password pair are used (no such user), it should be forbidden
+GET http://localhost:8080/v1/fragments
+Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhjlkkj3JkMQ==
+
+HTTP/1.1 401
+
 POST http://localhost:8080/v1/fragments
 # user1@email.com:password1
 Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
