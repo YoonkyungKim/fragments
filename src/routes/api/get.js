@@ -7,7 +7,7 @@ const { Fragment } = require('../../model/fragment');
 const { createSuccessResponse, createErrorResponse } = require('../../response');
 
 module.exports = async (req, res) => {
-  logger.debug("req.query in get: " + JSON.stringify(req.query));
+  logger.debug('req.query in get: ' + JSON.stringify(req.query));
   
   const expand = req.query.expand === '1';
   // await'ed call needs to have the error case handled so your server doesn't crash

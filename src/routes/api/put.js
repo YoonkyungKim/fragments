@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
   logger.debug({ body: req.body }, 'PUT /fragments/:id');
 
   if (!Buffer.isBuffer(req.body)) {
-    return res.status(415).json(createErrorResponse(415, "Unsupported Media Type"));
+    return res.status(415).json(createErrorResponse(415, 'Unsupported Media Type'));
   }
 
   const id = req.params.id.split('.')[0];
@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
 
     // If no such fragment exists with the given id, returns an HTTP 404 with an appropriate error message.
     if (!existingFragment) {
-      return res.status(404).json(createErrorResponse(404, "No fragment with this id"));
+      return res.status(404).json(createErrorResponse(404, 'No fragment with this id'));
     }
     
     // If the Content-Type of the request does not match the existing fragment's type, 

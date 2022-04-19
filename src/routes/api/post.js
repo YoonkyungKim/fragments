@@ -6,7 +6,7 @@ module.exports = async (req, res) => {
   logger.debug({ body: req.body }, 'POST /fragments');
 
   if (!Buffer.isBuffer(req.body)) {
-    return res.status(415).json(createErrorResponse(415, "Unsupported Media Type"));
+    return res.status(415).json(createErrorResponse(415, 'Unsupported Media Type'));
   }
 
   try {

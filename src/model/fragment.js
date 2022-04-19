@@ -37,13 +37,13 @@ const validTypes = [
 class Fragment {
   constructor({ id, ownerId, type, created = undefined, updated = undefined, size = 0 }) {
     if (!ownerId || !type) {
-      throw new Error("owner id and type is required");
-    }	else if (typeof size !== "number") {
-      throw new Error("size must be a number");
+      throw new Error('owner id and type is required');
+    }	else if (typeof size !== 'number') {
+      throw new Error('size must be a number');
     } else if (size < 0) {
-      throw new Error("size cannot be negative");
+      throw new Error('size cannot be negative');
     } else if (!(Fragment.isSupportedType(type))) {
-      throw new Error("invalid type");
+      throw new Error('invalid type');
     } else {
       this.id = id || nanoid();
       this.ownerId = ownerId;
@@ -140,7 +140,7 @@ class Fragment {
 	 */
   async setData(data) {
     if (!Buffer.isBuffer(data)) {
-      throw new Error("data is not a Buffer");
+      throw new Error('data is not a Buffer');
     } else {
       this.size = Buffer.byteLength(data);
       this.save();
@@ -199,7 +199,7 @@ class Fragment {
 	 * @returns {boolean} true if we support this Content-Type (i.e., type/subtype)
 	 */
   static isSupportedType(value) {
-    logger.debug("isSupportedType: " + value);
+    logger.debug('isSupportedType: ' + value);
     return validTypes.some(element => value.includes(element));
   }
 
@@ -213,9 +213,9 @@ class Fragment {
     let destType = mime.lookup(extension);
     const convertableFormats = this.formats;
 
-    logger.debug("type: " + this.type);
-    logger.debug("mimeType: " + this.mimeType);
-    logger.debug("convertable formats: " + convertableFormats);
+    logger.debug('type: ' + this.type);
+    logger.debug('mimeType: ' + this.mimeType);
+    logger.debug('convertable formats: ' + convertableFormats);
 
     if (!convertableFormats.includes(destType)) {
       logger.warn('Cannot convert fragment to this type');

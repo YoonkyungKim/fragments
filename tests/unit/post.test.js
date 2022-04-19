@@ -19,7 +19,7 @@ describe('POST /v1/fragments', () => {
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
       .set('Content-Type', 'text/plain')
-      .send("aa");
+      .send('aa');
     const body = JSON.parse(res.text);
     expect(res.statusCode).toBe(201);
     expect(body.status).toBe('ok');
@@ -36,7 +36,8 @@ describe('POST /v1/fragments', () => {
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
       .set('Content-Type', 'image/jpeg')
-      .send(fs.readFileSync(filePath))
+      .send(fs.readFileSync(filePath));
+
     expect(res.statusCode).toBe(201);
   });
 
@@ -46,7 +47,7 @@ describe('POST /v1/fragments', () => {
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
       .set('Content-Type', 'text/plain')
-      .send("This is fragment");
+      .send('This is fragment');
     expect(res.statusCode).toBe(201);
     expect(res.headers.location).toEqual(`${process.env.API_URL}/v1/fragments/${JSON.parse(res.text).fragment.id}`);
   });
@@ -57,7 +58,7 @@ describe('POST /v1/fragments', () => {
       .post('/v1/fragments')
       .set('Content-Type', 'audio/mpeg')
       .auth('user1@email.com', 'password1')
-      .send("aa")
+      .send('aa')
       .expect(415)
   );
 });

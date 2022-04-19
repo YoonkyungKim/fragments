@@ -5,14 +5,14 @@ const wait = async (ms = 1000) => new Promise((resolve) => setTimeout(resolve, m
 
 // Currently, only text/* and application/json type are supported. Others will be added later.
 const validTypes = [
-  `text/plain`,
-  `text/markdown`,
-  `text/html`,
-  `application/json`,
-  `image/png`,
-  `image/jpeg`,
-  `image/webp`,
-  `image/gif`,
+  'text/plain',
+  'text/markdown',
+  'text/html',
+  'application/json',
+  'image/png',
+  'image/jpeg',
+  'image/webp',
+  'image/gif',
 ];
 
 describe('Fragment class', () => {

@@ -51,7 +51,7 @@ app.use((err, req, res, next) => {
 
   // If this is a server error, log something so we can see what's going on
   if (status > 499) {
-    logger.error({ err }, `Error processing request`);
+    logger.error({ err }, 'Error processing request');
   }
 
   res.status(status).json(createErrorResponse(status, message));

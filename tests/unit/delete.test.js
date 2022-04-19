@@ -13,7 +13,7 @@ describe('DELETE /v1/fragments', () => {
   // No fragment with the given id
   test('if no id found, returns 404 error', async () => {
     const deleted = await request(app)
-      .delete(`/v1/fragments/randomid`)
+      .delete('/v1/fragments/randomid')
       .auth('user1@email.com', 'password1');
 
     expect(deleted.statusCode).toBe(404);
@@ -41,7 +41,7 @@ describe('DELETE /v1/fragments', () => {
     expect(getRes.statusCode).toBe(404);
 
     const getAll = await request(app)
-      .get(`/v1/fragments`)
+      .get('/v1/fragments')
       .auth('user2@email.com', 'password2');
 
     expect(getAll.body.fragments).toEqual([]);

@@ -13,5 +13,6 @@ module.exports = {
   },
   rules: {
     "indent": ["error", 2],
+    "quotes": [2, "single", "avoid-escape"],
   },
 };

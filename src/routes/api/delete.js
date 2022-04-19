@@ -16,7 +16,7 @@ module.exports = async (req, res) => {
 
     // If the id is not found, returns an HTTP 404 with an appropriate error message.
     if (!fragment) {
-      return res.status(404).json(createErrorResponse(404, "Id not found"));
+      return res.status(404).json(createErrorResponse(404, 'Id not found'));
     }
 
     await Fragment.delete(req.user, id);

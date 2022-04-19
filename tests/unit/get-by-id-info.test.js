@@ -38,7 +38,7 @@ describe('GET /v1/fragments/:id/info', () => {
       .send('This is fragment');
 
     const getRes = await request(app)
-      .get(`/v1/fragments/randomid/info`)
+      .get('/v1/fragments/randomid/info')
       .auth('user1@email.com', 'password1');
 
     expect(getRes.statusCode).toBe(404);

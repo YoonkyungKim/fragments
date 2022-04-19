@@ -30,7 +30,7 @@ describe('GET /v1/fragments/:id', () => {
   // No fragment with the given id
   test('no fragments with the given id returns 404 error', async () => {
     const getRes = await request(app)
-      .get(`/v1/fragments/randomid`)
+      .get('/v1/fragments/randomid')
       .auth('user1@email.com', 'password1');
     expect(getRes.statusCode).toBe(404);
   });
@@ -66,7 +66,7 @@ describe('GET /v1/fragments/:id', () => {
       .auth('user3@email.com', 'password3');
 
     expect(getRes.statusCode).toBe(200);
-    expect(getRes.headers["content-type"]).toEqual("text/html; charset=utf-8");
+    expect(getRes.headers['content-type']).toEqual('text/html; charset=utf-8');
   });
 
   // convert md to plain text
@@ -84,7 +84,7 @@ describe('GET /v1/fragments/:id', () => {
 
     console.log(getRes);
     expect(getRes.statusCode).toBe(200);
-    expect(getRes.headers["content-type"]).toEqual("text/plain; charset=utf-8");
+    expect(getRes.headers['content-type']).toEqual('text/plain; charset=utf-8');
   });
 
   

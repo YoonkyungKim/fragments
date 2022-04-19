@@ -4,7 +4,7 @@ const { writeFragment, readFragment, writeFragmentData, readFragmentData, listFr
 const wait = async (ms = 500) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('memory', () => {
-  const makeOwnerId = () => ("ownerId-" + Date.now());
+  const makeOwnerId = () => ('ownerId-' + Date.now());
   let ownerId;
 
   beforeEach(async () => {

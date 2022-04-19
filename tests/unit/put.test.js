@@ -48,7 +48,7 @@ describe('PUT /v1/fragments', () => {
   // If no such fragment exists with the given id, returns an HTTP 404 with an appropriate error message.
   test('if no id found, returns 404 error', async () => {
     const putRes = await request(app)
-      .put(`/v1/fragments/randomid`)
+      .put('/v1/fragments/randomid')
       .auth('user1@email.com', 'password1')
       .set('Content-Type', 'text/plain')
       .send('This is updated fragment');
