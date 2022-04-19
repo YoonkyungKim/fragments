@@ -1,4 +1,5 @@
 const request = require('supertest');
+const fs = require('mz/fs');
 
 const app = require('../../src/app');
 
@@ -25,6 +26,18 @@ describe('POST /v1/fragments', () => {
     expect(body.fragment.type).toMatch(/text\/plain+/);
     expect(Object.keys(body.fragment)).toEqual(['id', 'ownerId', 'created', 'updated', 'type', 'size']);
     expect(body.fragment.size).toEqual(2);
+  });
+
+  const filePath = `${__dirname}/testFiles/dog.jpeg`;
+
+  // post image (jpeg) fragment
+  test('post the image fragment', async () => {
+    const res = await request(app)
+      .post('/v1/fragments')
+      .auth('user1@email.com', 'password1')
+      .set('Content-Type', 'image/jpeg')
+      .send(fs.readFileSync(filePath))
+    expect(res.statusCode).toBe(201);
   });
 
   //responses include a Location header with a URL to GET the fragment

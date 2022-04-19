@@ -1,5 +1,5 @@
 const request = require('supertest');
-
+const fs = require('mz/fs');
 const app = require('../../src/app');
 
 describe('GET /v1/fragments/:id', () => {
@@ -32,7 +32,6 @@ describe('GET /v1/fragments/:id', () => {
     const getRes = await request(app)
       .get(`/v1/fragments/randomid`)
       .auth('user1@email.com', 'password1');
-
     expect(getRes.statusCode).toBe(404);
   });
 
@@ -65,8 +64,73 @@ describe('GET /v1/fragments/:id', () => {
     const getRes = await request(app)
       .get(`/v1/fragments/${id}.html`)
       .auth('user3@email.com', 'password3');
-    console.log("getres text:"+getRes.text);
+
     expect(getRes.statusCode).toBe(200);
     expect(getRes.headers["content-type"]).toEqual("text/html; charset=utf-8");
+  });
+
+  // convert md to plain text
+  test('markdown data can be converted to plain text, user can get converted result by specifying extension', async () => {
+    const postRes = await request(app)
+      .post('/v1/fragments')
+      .auth('user2@email.com', 'password2')
+      .set('Content-Type', 'text/markdown')
+      .send('# This is fragment 2');
+    const id = (JSON.parse(postRes.text)).fragment.id;
+
+    const getRes = await request(app)
+      .get(`/v1/fragments/${id}.txt`)
+      .auth('user2@email.com', 'password2');
+
+    console.log(getRes);
+    expect(getRes.statusCode).toBe(200);
+    expect(getRes.headers["content-type"]).toEqual("text/plain; charset=utf-8");
+  });
+
+  
+  const filePath = `${__dirname}/testFiles/dog.jpeg`;
+
+  // get image fragment
+  test('get the image fragment', async () => {
+    const postRes = await request(app)
+      .post('/v1/fragments')
+      .auth('user1@email.com', 'password1')
+      .set('Content-Type', 'image/jpeg')
+      .send(fs.readFileSync(filePath))
+    
+    expect(postRes.statusCode).toBe(201);
+    
+    const id = postRes.header.location.split('fragments/')[1];
+
+    const getRes = await request(app)
+      .get(`/v1/fragments/${id}`)
+      .auth('user1@email.com', 'password1');
+
+    expect(getRes.statusCode).toBe(200);
+  });
+
+  // get image fragment by converting it to other image formats
+  test('get the image fragment by converting it to other image formats', async () => {
+    const postRes = await request(app)
+      .post('/v1/fragments')
+      .auth('user1@email.com', 'password1')
+      .set('Content-Type', 'image/jpeg')
+      .send(fs.readFileSync(filePath))
+    
+    expect(postRes.statusCode).toBe(201);
+    
+    const id = postRes.header.location.split('fragments/')[1];
+
+    const getResPng = await request(app)
+      .get(`/v1/fragments/${id}.png`)
+      .auth('user1@email.com', 'password1');
+
+    expect(getResPng.statusCode).toBe(200);
+
+    const getResWebp = await request(app)
+      .get(`/v1/fragments/${id}.webp`)
+      .auth('user1@email.com', 'password1');
+
+    expect(getResWebp.statusCode).toBe(200);
   });
 });
