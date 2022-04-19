@@ -2,7 +2,6 @@
  * Get a fragment data with the given ID
  */
 const path = require('path');
-var mime = require('mime-types');
 const logger = require('../../logger');
 const { Fragment } = require('../../model/fragment');
 const { createErrorResponse } = require('../../response');
@@ -24,21 +23,17 @@ module.exports = async (req, res) => {
     const extension = path.extname(req.params.id);
     logger.debug('extension: ' + extension);
     if (extension) {
-      let typeConvertedTo = mime.lookup(extension);
-      let convertedResult = data;
 
       // converting other formats to plain text means only mimeType change, we don't need data change
-      if (typeConvertedTo !== 'text/plain') {
-        convertedResult = await fragment.convertType(data, typeConvertedTo);
-      }
+      const { convertedResult, convertedType } = await fragment.convertType(data, extension);
       
       // If the extension used represents an unknown or unsupported type, or if the fragment cannot be converted to this type, 
       // an HTTP 415 error is returned instead, with an appropriate message. For example, a plain text fragment cannot be returned as a PNG.
-      if (!convertedResult){
+      if (!convertedResult) {
         return res.status(415).json(createErrorResponse(415, "Extension provided is unsupported type or fragment cannot be converted to this type"));
       }
 
-      res.set('Content-Type', typeConvertedTo);
+      res.set('Content-Type', convertedType);
       res.status(200).send(convertedResult);
     } else {
       // if no conversion needed

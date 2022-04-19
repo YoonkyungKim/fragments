@@ -6,6 +6,7 @@ const md = require('markdown-it')({
   html: true,
 });
 const sharp = require('sharp');
+var mime = require('mime-types');
 
 // Functions for working with fragment metadata/data using our DB
 const {
@@ -109,9 +110,14 @@ class Fragment {
 	 * Saves the current fragment to the database
 	 * @returns Promise
 	 */
-  save() {
-    this.updated = new Date().toISOString();
-    return writeFragment(this);
+  async save() {
+    try {
+      this.updated = new Date().toISOString();
+      return await writeFragment(this);
+    } catch (err) {
+      logger.warn({ err }, 'Error to save fragment');
+      throw new Error('unable to save fragment');
+    }
   }
 
   /**
@@ -200,42 +206,47 @@ class Fragment {
   /**
 	 * Returns the data converted to the desired type
 	 * @param {Buffer} data fragment data to be converted
-   * @param {string} destType the type you want to convert to (desired type)
+   * @param {string} extension the type extension you want to convert to (desired type)
 	 * @returns {Buffer} converted fragment data
 	 */
-  async convertType(data, destType) {
+  async convertType(data, extension) {
+    let destType = mime.lookup(extension);
     const convertableFormats = this.formats;
+
     logger.debug("type: " + this.type);
     logger.debug("mimeType: " + this.mimeType);
     logger.debug("convertable formats: " + convertableFormats);
 
     if (!convertableFormats.includes(destType)) {
       logger.warn('Cannot convert fragment to this type');
+      // throw new Error('Cannot convert fragment to this type');
       return false;
     }
 
     let convertedResult = data;
-    if (this.type === 'text/markdown' && destType === 'text/html') {
-      convertedResult = md.render(data.toString());
-      convertedResult = Buffer.from(convertedResult);
-    } else if (destType === 'image/jpeg') {
-      convertedResult = await sharp(data)
-        .jpeg()
-        .toBuffer();
-    } else if (destType === 'image/png') {
-      convertedResult = await sharp(data)
-        .png()
-        .toBuffer();
-    } else if (destType === 'image/webp') {
-      convertedResult = await sharp(data)
-        .webp()
-        .toBuffer();
-    } else if (destType === 'image/gif') {
-      convertedResult = await sharp(data)
-        .gif()
-        .toBuffer();
+    if (this.mimeType !== destType) {
+      if (this.mimeType === 'text/markdown' && destType === 'text/html') {
+        convertedResult = md.render(data.toString());
+        convertedResult = Buffer.from(convertedResult);
+      } else if (destType === 'image/jpeg') {
+        convertedResult = await sharp(data)
+          .jpeg()
+          .toBuffer();
+      } else if (destType === 'image/png') {
+        convertedResult = await sharp(data)
+          .png()
+          .toBuffer();
+      } else if (destType === 'image/webp') {
+        convertedResult = await sharp(data)
+          .webp()
+          .toBuffer();
+      } else if (destType === 'image/gif') {
+        convertedResult = await sharp(data)
+          .gif()
+          .toBuffer();
+      }
     }
-    return convertedResult;
+    return { convertedResult, convertedType: destType };
   }
 }
 
